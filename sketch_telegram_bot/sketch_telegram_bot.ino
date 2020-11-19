@@ -12,8 +12,8 @@ const char* ssid = "";
 const char* password = "";
 
 // Initialize Telegram BOT
-#define BOTtoken "1400009535:AAEub-QSHVMloGPZ90l7xiHEFmoAPX9FYiM"
-#define CHAT_ID "602718839"
+#define BOTtoken ""
+#define CHAT_ID ""
 
 WiFiClientSecure net_ssl; 
 UniversalTelegramBot bot(BOTtoken, net_ssl);
