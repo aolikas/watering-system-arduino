@@ -4,8 +4,8 @@
 #include <ArduinoJson.h>
 
 // Wifi defenitions
-const char* ssid = "TrollAthenaeum";
-const char* password = "PendeL100kg";
+const char* ssid = "";
+const char* password = "";
 
 //Telegram config
 #define BOTtoken ""
