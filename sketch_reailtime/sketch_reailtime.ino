@@ -5,12 +5,12 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
-#define FIREBASE_HOST "soilmoisturetemperatureproject.firebaseio.com"
-#define FIREBASE_AUTH "lK90UlpKwR0MlEc6Hqj4XFS3TcPi1IMv6yzlGkTm"
+#define FIREBASE_HOST ""
+#define FIREBASE_AUTH ""
 
 // Wifi defenitions
-const char* ssid = "TrollAthenaeum";
-const char* password = "PendeL100kg";
+const char* ssid = "";
+const char* password = "";
 
 int soilMoistureValue;
 
@@ -18,11 +18,11 @@ const int AirValue = 857;
 const int WaterValue = 440;
 int intervals = (AirValue - WaterValue) / 3;
 
-String DB_NAME = "Users";
-String USER_ID = "exdxLIjgqCQVQMOBfbLTLUPkb2U2";
-String SENSOR_SUB_DB = "userSensors";
-String SENSOR_ID = "-MQI10eju5ibtJRjanSO";
-String SENSOR_CONDITION = "userSensorMoistureCondition";
+String DB_NAME = "";
+String USER_ID = "";
+String SENSOR_SUB_DB = "";
+String SENSOR_ID = "";
+String SENSOR_CONDITION = "";
 
 void setup() {
    Serial.begin(115200);
