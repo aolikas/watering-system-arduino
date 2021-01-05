@@ -5,12 +5,12 @@
 #include <NTPClient.h>
 #include <WiFiUdp.h>
 
-#define FIREBASE_HOST ""
-#define FIREBASE_AUTH ""
+#define FIREBASE_HOST "soilmoisturetemperatureproject.firebaseio.com"
+#define FIREBASE_AUTH "lK90UlpKwR0MlEc6Hqj4XFS3TcPi1IMv6yzlGkTm"
 
 // Wifi defenitions
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "TrollAthenaeum";
+const char* password = "PendeL100kg";
 
 int soilMoistureValue;
 
@@ -18,20 +18,14 @@ const int AirValue = 857;
 const int WaterValue = 440;
 int intervals = (AirValue - WaterValue) / 3;
 
-//UTC +1 -> 1 * 60 *60
-const long utcOffsetInSeconds = 3600;
-
-//define NTP client to get time
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
-
-
-String DB_NAME = "SensorDataWithDateTime";
-String HUMIDITY = "Humidity";
-String CONDITION = "Condition";
+String DB_NAME = "Users";
+String USER_ID = "exdxLIjgqCQVQMOBfbLTLUPkb2U2";
+String SENSOR_SUB_DB = "userSensors";
+String SENSOR_ID = "-MQI10eju5ibtJRjanSO";
+String SENSOR_CONDITION = "userSensorMoistureCondition";
 
 void setup() {
-  Serial.begin(115200);
+   Serial.begin(115200);
   
   pinMode(A0, INPUT);
   soilMoistureValue = analogRead(A0);
@@ -42,106 +36,32 @@ void setup() {
 
   Serial.println("Going to sleep");
 
-  ESP.deepSleep(600e6);
+  ESP.deepSleep(20e6);
 
 }
 
 void loop() {
+  // put your main code here, to run repeatedly:
+
 }
-
-String getDate() {
-
-  unsigned long epochTime = timeClient.getEpochTime();
-  Serial.print("Epoch Time: ");
-  Serial.println(epochTime);
-
-  //Get a time structure
-  struct tm *ptm = gmtime ((time_t *)&epochTime); 
-
-  int monthDay = ptm->tm_mday;
-  Serial.print("Month day: ");
-  Serial.println(monthDay);
-
-  int currentMonth = ptm->tm_mon+1;
-  Serial.print("Month: ");
-  Serial.println(currentMonth);
-
-  int currentYear = ptm->tm_year+1900;
-  Serial.print("Year: ");
-  Serial.println(currentYear);
-
-  //Print complete date:
-  String currentDate = String(currentYear) + "-" + String(currentMonth) + "-" + String(monthDay);
-  Serial.print("Current date: ");
-  Serial.println(currentDate);
-
-  return currentDate;
-}
-
-String getTime() {
-
-  String hr, mn, sc;
-  
-  if(timeClient.getHours() < 10) {
-    hr = "0" + String(timeClient.getHours());
-  } else {
-    hr = String(timeClient.getHours());
-  }
-
-  if(timeClient.getMinutes() < 10) {
-    mn = "0" + String(timeClient.getMinutes());
-  } else {
-    mn = String(timeClient.getMinutes());
-  }
-
-   if(timeClient.getSeconds() < 10) {
-    sc = "0" + String(timeClient.getSeconds());
-  } else {
-    sc = String(timeClient.getSeconds());
-  }
-
-  String timeNow = hr + ":" + mn + ":" + sc;
-  Serial.println(timeNow);
-  return timeNow;
-  }
 
 void sentToRealTime() {
 
-  
-  timeClient.begin();
-
-  while(!timeClient.update()) {
-    timeClient.forceUpdate();
-  }
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
-  
-  String currentDate = getDate();
-  String currentTime = getTime();
-  String condition = getReadings(soilMoistureValue);
-  
 
+  String condition = getSoilSensorReadings(soilMoistureValue);
+ 
   Serial.print("Humidity: ");
   Serial.println(soilMoistureValue);
   Serial.print("Condition: ");
   Serial.println(condition);
 
-  String humidityDataInt = DB_NAME + "/" + currentDate + "/" + currentTime + "/" + HUMIDITY;
-  Firebase.setInt(humidityDataInt,soilMoistureValue);
-
-  if(Firebase.failed()) {
-    Serial.println("Setting Humidity failed");
-    Serial.println(Firebase.error());
-    delay(500);
-    return;
-  }
-
-  String conditionData = DB_NAME + "/" + currentDate + "/" + currentTime + "/" + CONDITION;
-
-   Firebase.setString(conditionData,condition);
-
-  if(Firebase.failed()) {
-    Serial.println("Setting Humidity string failed");
+  String currentSoilConditionToDB = DB_NAME + "/" + USER_ID + "/" + SENSOR_SUB_DB + "/" + SENSOR_ID + "/" + SENSOR_CONDITION;
+  
+  Firebase.setString(currentSoilConditionToDB,condition);
+    if(Firebase.failed()) {
+    Serial.println("Setting Soil Condition failed");
     Serial.println(Firebase.error());
     delay(500);
     return;
@@ -175,7 +95,7 @@ void connectToWiFi() {
   Serial.println(WiFi.localIP()); 
  }
 
-String getReadings(int sensorData) {
+String getSoilSensorReadings(int sensorData) {
 
   String condition = "";
 
@@ -192,22 +112,3 @@ String getReadings(int sensorData) {
 
   return condition;
 }
-
-  
-
- // ------------------Get Data from RealTime
- /*
-  Serial.print("Value: ");
-  Serial.println(Firebase.getString("RandomVal/Val"));
-
-  if(Firebase.failed()) {
-    Serial.println("Setting / Value is failed");
-    Serial.println(Firebase.error());
-    delay(500);
-    return;
-  }
-
-  delay(5000);
-}
-
-*/

@@ -4,8 +4,8 @@
 #define led 13
 
 // Wifi defenitions
-const char* ssid = "TrollAthenaeum";
-const char* password = "PendeL100kg";
+const char* ssid = "";
+const char* password = "";
 
 const int AirValue = 857;
 const int WaterValue = 440;
